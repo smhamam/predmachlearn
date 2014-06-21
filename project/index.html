@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Practical Machine Learining Course Project</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Practical Machine Learining Course Project">
+  <meta name="author" content="smhamam">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Practical Machine Learining Course Project</h1>
+    <h2></h2>
+    <p>smhamam<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Practical Machine Learining Course Project</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>First I loaded the Training and Testing sets
+</code></pre>
+
+<pre><code class="r">setwd(&quot;~/Coursera/Data Science/predmachlearn/Proj&quot;)
+tr&lt;-read.csv(&quot;pml-training.csv&quot;)
+ts&lt;-read.csv(&quot;pml-testing.csv&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Exploring Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>I made some plots to find out characteristics of the data, the plots show the data to be 
+non-leaner.
+</code></pre>
+
+<pre><code class="r">library(ggplot2)
+qplot(roll_belt,pitch_belt,col=classe,data=tr)
+qplot(roll_belt,yaw_belt,col=classe,data=tr)
+qplot(pitch_belt,yaw_belt,col=classe,data=tr)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Plot #1</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img class=center src=./assets/img/plot1.png height=500></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Plot #2</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img class=center src=./assets/img/plot2.png height=500></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Plot #3</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img class=center src=./assets/img/plot3.png height=500></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Selecting Learning Algorithm</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Since the data is non-leaner I choose Random Tree Forst Algorithm since it performs will 
+on non-leaner data.
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Selecting Variables</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Since the purpose of the project is to learn the training set and predict the class of the test 
+set, I Analyzed the test set to find out which variables have data (not completely NA) as 
+variables that are completely empty in the trainig set will not add any information to the 
+prediction for the test set.
+</code></pre>
+
+<pre><code class="r">naCnt&lt;-summary(sapply(ts,is.na))
+</code></pre>
+
+<pre><code>Find variable names that has data.
+</code></pre>
+
+<pre><code class="r">cols&lt;-names(ts)[grepl(&quot;FALSE&quot;,naCnt[2,])]
+</code></pre>
+
+<pre><code>and skip the first 7 columns and the last column as they are not relevent to the learning problem.
+</code></pre>
+
+<pre><code class="r">cols&lt;-cols[8:53]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Learining ...</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>USe the randomForest Package to learn from the trainig data, column 160 is the classe variable 
+(output), prox=TRUE option for  proximity measures be computed,Proximities are used in replacing 
+missing data, locating outliers, and producing illuminating low-dimensional views of the data.
+all other option are default, number of trees ntree=500, number of variables selected randomly to 
+construct each tree mtry=6.
+finally save the model object to disk.
+</code></pre>
+
+<pre><code class="r">library(randomForest)
+modFit&lt;-randomForest(tr[,cols], tr[,160], prox=TRUE,data=tr)
+save(modFit,file=&quot;modFit.Rda&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Prediction ...</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Use the model opject to predict the class of the test data
+</code></pre>
+
+<pre><code class="r">result&lt;-predict(modFit,ts[cols])
+</code></pre>
+
+<pre><code> 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+ B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+ the prediction result is 100% accurate.
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Cross Validation</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>The randomForest package internally performs cross validation as per the documentation:
+&quot;in random forests, there is no need for cross-validation or a separate test set to get an 
+unbiased estimate of the test set error. It is estimated internally, during the run, as follows:
+
+Each tree is constructed using a different bootstrap sample from the original data. About 
+one-third of the cases are left out of the bootstrap sample and not used in the construction 
+of the kth tree.
+
+Put each case left out in the construction of the kth tree down the kth tree to get a classification. 
+In this way, a test set classification is obtained for each case in about one-third of the trees. 
+At the end of the run, take j to be the class that got most of the votes every time case n was oob. 
+The proportion of times that j is not equal to the true class of n averaged over all cases is the oob 
+error estimate. This has proven to be unbiased in many tests.&quot;
+
+</code></pre>
+
+<p><a href="http://www.stat.berkeley.edu/%7Ebreiman/RandomForests/cc_home.htm">http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Out Of Bag (OOB) Error</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Out of Bag Error is computed internally by the randomForest Package and for our case the OOB value 
+can be retrived as follows.
+</code></pre>
+
+<pre><code class="r">oobError&lt;-modFit$err.rate[500,1]
+</code></pre>
+
+<pre><code>The OOB value was = 0.003363572
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Variable Importance</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>The following command plots the variables with their importance
+</code></pre>
+
+<pre><code class="r">varImpPlot(modFit)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Variable Importance</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img class=center src=./assets/img/plot4.png height=500></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>Thank you</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Practical Machine Learining Course Project'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Exploring Data'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Plot #1'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Plot #2'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Plot #3'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Selecting Learning Algorithm'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Selecting Variables'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Learining ...'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Prediction ...'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Cross Validation'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Out Of Bag (OOB) Error'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Variable Importance'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Variable Importance'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='Thank you'>
+         14
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

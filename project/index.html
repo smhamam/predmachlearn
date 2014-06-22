@@ -125,7 +125,7 @@ on non-leaner data.
 
 <slide class="" id="slide-7" style="background:;">
   <hgroup>
-    <h2>Selecting Variables</h2>
+    <h2>Preperation</h2>
   </hgroup>
   <article data-timings="">
     <pre><code>Since the purpose of the project is to learn the training set and predict the class of the test 
@@ -160,9 +160,7 @@ prediction for the test set.
   <article data-timings="">
     <pre><code>Used the rfcv function to get the following data showing the relationship between Error and number
 of variables used, according to the graph using 12 variables will be suffeciant to give a good model
-without over fitting, unfortionatly the function does not provide variable importance to aid feature 
-slelection,the proper procedure is to use 10% of the trainig data to select the most important 12 
-variables but since I had limited time I used all variables in the learning process.
+without over fitting.
 </code></pre>
 
 <p><img class=center src=./assets/img/plot5.png height=400></p>
@@ -172,6 +170,67 @@ variables but since I had limited time I used all variables in the learning proc
 </slide>
 
 <slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Feature Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Selected 10% of the training data for cross validation, executed randomForest on the validation set.
+</code></pre>
+
+<pre><code class="r">library(randomForest)
+inValidation=createDataPartition(y=tr$classe,p=0.1,list=FALSE)
+tv&lt;-tr[inValidation,]
+modValid&lt;-randomForest(tv[,cols], tv[,160], prox=TRUE,data=tv)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Feature Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Ploted the importance graph and generated the importance list on the validation data.
+</code></pre>
+
+<pre><code class="r">varImpPlot(modValid)
+importance(modValid)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Feature Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img class=center src=./assets/img/plot4.png height=600></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Feature Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Selected the most important 12 variables.
+</code></pre>
+
+<pre><code class="r">cols&lt;-c(&quot;roll_belt&quot;,&quot;pitch_forearm&quot;,&quot;yaw_belt&quot;,&quot;magnet_dumbbell_z&quot;,&quot;pitch_belt&quot;,&quot;magnet_dumbbell_y&quot;,
+        &quot;roll_forearm&quot;,&quot;magnet_belt_z&quot;,&quot;magnet_dumbbell_x&quot;,&quot;magnet_belt_y&quot;,&quot;roll_dumbbell&quot;,&quot;accel_belt_z&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
   <hgroup>
     <h2>Learining ...</h2>
   </hgroup>
@@ -193,7 +252,7 @@ save(modFit,file=&quot;modFit.Rda&quot;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-10" style="background:;">
+<slide class="" id="slide-14" style="background:;">
   <hgroup>
     <h2>Prediction ...</h2>
   </hgroup>
@@ -213,7 +272,7 @@ save(modFit,file=&quot;modFit.Rda&quot;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-11" style="background:;">
+<slide class="" id="slide-15" style="background:;">
   <hgroup>
     <h2>Out Of Bag (OOB) Error</h2>
   </hgroup>
@@ -225,40 +284,14 @@ can be retrived as follows.
 <pre><code class="r">oobError&lt;-modFit$err.rate[500,1]
 </code></pre>
 
-<pre><code>The OOB value was = 0.003363572
+<pre><code>The OOB value was = 0.009886862
 </code></pre>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-12" style="background:;">
-  <hgroup>
-    <h2>Variable Importance</h2>
-  </hgroup>
-  <article data-timings="">
-    <pre><code>The following command plots the variables with their importance
-</code></pre>
-
-<pre><code class="r">varImpPlot(modFit)
-</code></pre>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-13" style="background:;">
-  <hgroup>
-    <h2>Variable Importance</h2>
-  </hgroup>
-  <article data-timings="">
-    <p><img class=center src=./assets/img/plot4.png height=500></p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-14" style="background:;">
+<slide class="" id="slide-16" style="background:;">
   <hgroup>
     <h2>Thank you</h2>
   </hgroup>
@@ -310,7 +343,7 @@ can be retrived as follows.
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=7 title='Selecting Variables'>
+        data-slide=7 title='Preperation'>
          7
       </a>
     </li>
@@ -322,38 +355,50 @@ can be retrived as follows.
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=9 title='Learining ...'>
+        data-slide=9 title='Feature Selection'>
          9
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=10 title='Prediction ...'>
+        data-slide=10 title='Feature Selection'>
          10
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=11 title='Out Of Bag (OOB) Error'>
+        data-slide=11 title='Feature Selection'>
          11
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=12 title='Variable Importance'>
+        data-slide=12 title='Feature Selection'>
          12
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=13 title='Variable Importance'>
+        data-slide=13 title='Learining ...'>
          13
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=14 title='Thank you'>
+        data-slide=14 title='Prediction ...'>
          14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='Out Of Bag (OOB) Error'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='Thank you'>
+         16
       </a>
     </li>
   </ul>

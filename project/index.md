@@ -57,7 +57,7 @@ on non-leaner data.
 ```
 
 ---
-## Selecting Variables
+## Preperation
 ```
 Since the purpose of the project is to learn the training set and predict the class of the test 
 set, I Analyzed the test set to find out which variables have data (not completely NA) as 
@@ -88,11 +88,48 @@ cols<-cols[8:53]
 ```
 Used the rfcv function to get the following data showing the relationship between Error and number
 of variables used, according to the graph using 12 variables will be suffeciant to give a good model
-without over fitting, unfortionatly the function does not provide variable importance to aid feature 
-slelection,the proper procedure is to use 10% of the trainig data to select the most important 12 
-variables but since I had limited time I used all variables in the learning process.
+without over fitting.
 ```
 <img class=center src=./assets/img/plot5.png height=400>
+
+---
+## Feature Selection
+```
+Selected 10% of the training data for cross validation, executed randomForest on the validation set.
+```
+
+```r
+library(randomForest)
+inValidation=createDataPartition(y=tr$classe,p=0.1,list=FALSE)
+tv<-tr[inValidation,]
+modValid<-randomForest(tv[,cols], tv[,160], prox=TRUE,data=tv)
+```
+
+---
+## Feature Selection
+```
+Ploted the importance graph and generated the importance list on the validation data.
+```
+
+```r
+varImpPlot(modValid)
+importance(modValid)
+```
+
+---
+## Feature Selection
+<img class=center src=./assets/img/plot4.png height=600>
+
+---
+## Feature Selection
+```
+Selected the most important 12 variables.
+```
+
+```r
+cols<-c("roll_belt","pitch_forearm","yaw_belt","magnet_dumbbell_z","pitch_belt","magnet_dumbbell_y",
+        "roll_forearm","magnet_belt_z","magnet_dumbbell_x","magnet_belt_y","roll_dumbbell","accel_belt_z")
+```
 
 ---
 ## Learining ...
@@ -138,22 +175,8 @@ can be retrived as follows.
 oobError<-modFit$err.rate[500,1]
 ```
 ```
-The OOB value was = 0.003363572
+The OOB value was = 0.009886862
 ```
-
----
-## Variable Importance
-```
-The following command plots the variables with their importance
-```
-
-```r
-varImpPlot(modFit)
-```
-
----
-## Variable Importance
-<img class=center src=./assets/img/plot4.png height=500>
 
 ---
 ## Thank you

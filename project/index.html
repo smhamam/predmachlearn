@@ -149,23 +149,29 @@ prediction for the test set.
 <pre><code class="r">cols&lt;-cols[8:53]
 </code></pre>
 
-<hr>
-
-<h2>Cross Validation</h2>
-
-<pre><code>Used the rfcv function to get the following data showing the relationship between Error and number
-of variables used, according to the graph using 12 variables will be suffeciant to give a good model
-without over fitting, unfortionatly the function does not provide variable importance to aid feature 
-slelection, since I had limited time I used all variables in the learning process.
-</code></pre>
-
-<p><img class=center src=./assets/img/plot5.png height=500></p>
-
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Cross Validation</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>Used the rfcv function to get the following data showing the relationship between Error and number
+of variables used, according to the graph using 12 variables will be suffeciant to give a good model
+without over fitting, unfortionatly the function does not provide variable importance to aid feature 
+slelection,the proper procedure is to use 10% of the trainig data to select the most important 12 
+variables but since I had limited time I used all variables in the learning process.
+</code></pre>
+
+<p><img class=center src=./assets/img/plot5.png height=400></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
   <hgroup>
     <h2>Learining ...</h2>
   </hgroup>
@@ -187,7 +193,7 @@ save(modFit,file=&quot;modFit.Rda&quot;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-9" style="background:;">
+<slide class="" id="slide-10" style="background:;">
   <hgroup>
     <h2>Prediction ...</h2>
   </hgroup>
@@ -202,33 +208,6 @@ save(modFit,file=&quot;modFit.Rda&quot;)
  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
  the prediction result is 100% accurate.
 </code></pre>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-10" style="background:;">
-  <hgroup>
-    <h2>Cross Validation</h2>
-  </hgroup>
-  <article data-timings="">
-    <pre><code>The randomForest package internally performs cross validation as per the documentation:
-&quot;in random forests, there is no need for cross-validation or a separate test set to get an 
-unbiased estimate of the test set error. It is estimated internally, during the run, as follows:
-
-Each tree is constructed using a different bootstrap sample from the original data. About 
-one-third of the cases are left out of the bootstrap sample and not used in the construction 
-of the kth tree.
-
-Put each case left out in the construction of the kth tree down the kth tree to get a classification. 
-In this way, a test set classification is obtained for each case in about one-third of the trees. 
-At the end of the run, take j to be the class that got most of the votes every time case n was oob. 
-The proportion of times that j is not equal to the true class of n averaged over all cases is the oob 
-error estimate. This has proven to be unbiased in many tests.&quot;
-
-</code></pre>
-
-<p><a href="http://www.stat.berkeley.edu/%7Ebreiman/RandomForests/cc_home.htm">http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm</a></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -337,19 +316,19 @@ can be retrived as follows.
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=8 title='Learining ...'>
+        data-slide=8 title='Cross Validation'>
          8
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=9 title='Prediction ...'>
+        data-slide=9 title='Learining ...'>
          9
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=10 title='Cross Validation'>
+        data-slide=10 title='Prediction ...'>
          10
       </a>
     </li>
